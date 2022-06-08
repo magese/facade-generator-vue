@@ -43,7 +43,7 @@ export default {
       downloadTemplate(this.templateFilename).then(res => {
         this.res = res
         isBlobResponse(res).then(r => {
-          download(r, this.templateFilename, 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;')
+          download(r.data, this.templateFilename, 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;')
         }).catch(e => {
           alert(e.msg)
           this.res = e
@@ -71,6 +71,8 @@ export default {
         this.res = {data, status, headers}
         if(data.code !== '000000') {
           alert(data.msg)
+          this.generateLoading = false
+          return
         }
         this.fileKey = data.data.fileKey
         this.generateLoading = false
@@ -85,7 +87,7 @@ export default {
       downloadCode(this.fileKey).then(res => {
         this.res = res
         isBlobResponse(res).then(r => {
-          download(r, this.fileKey, 'application/zip;')
+          download(r.data, this.fileKey, 'application/zip;')
         }).catch(e => {
           alert(e.msg)
           this.res = e
