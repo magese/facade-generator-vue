@@ -4,6 +4,7 @@ export function downloadTemplate(filename) {
   return request({
     url: `/generator/download/template/${filename}`,
     responseType: 'blob',
+    headers: {'Accept': 'application/octet-stream, application/json, text/plain, */*'},
     method: 'get'
   })
 }
@@ -11,7 +12,6 @@ export function downloadTemplate(filename) {
 export function generate(data) {
   return request({
     url: '/generator/generate',
-    headers: {'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'},
     method: 'post',
     data: data
   })
@@ -21,6 +21,7 @@ export function downloadCode(fileKey) {
   return request({
     url: `/generator/download/code/${fileKey}`,
     responseType: 'blob',
+    headers: {'Accept': 'application/octet-stream, application/json, text/plain, */*'},
     method: 'get'
   })
 }

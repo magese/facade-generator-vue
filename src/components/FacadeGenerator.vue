@@ -1,16 +1,19 @@
 <template>
   <div class="container" :class="{'loading': downloadTemplateLoading}">
     <h2>模板下载</h2>
+    <p>点击下方按钮下载配置Excel模板</p>
     <p>文件名称：<input type="text" v-model="templateFilename"></p>
-    <p><button @click="downloadTemplate">下载配置模板</button></p>
+    <p><button @click="downloadTemplate">下载模板</button></p>
   </div>
   <div class="container" :class="{'loading': generateLoading}">
     <h2>代码生成</h2>
+    <p>选择上传配置Excel文件生成代码</p>
     <p><input type="file" name="file" ref="upload"></p>
     <p><button @click="generate">生成代码</button></p>
   </div>
   <div class="container" :class="{'loading': downloadCodeLoading}">
     <h2>下载代码</h2>
+    <p>生成代码7天内可根据文件Key不限次下载，超过7天将会被清除</p>
     <p>生成文件Key：<input type="text" v-model="fileKey"></p>
     <p><button @click="downloadCode">下载代码</button></p>
   </div>
