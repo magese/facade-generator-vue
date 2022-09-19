@@ -9,6 +9,14 @@ export function downloadTemplate(filename) {
   })
 }
 
+export function dtoGenerate(data) {
+  return request({
+    url: '/generator/dto/generate',
+    method: 'post',
+    data: data
+  })
+}
+
 export function generate(data) {
   return request({
     url: '/generator/generate',
@@ -23,5 +31,22 @@ export function downloadCode(fileKey) {
     responseType: 'blob',
     headers: {'Accept': 'application/octet-stream, application/json, text/plain, */*'},
     method: 'get'
+  })
+}
+
+export function downloadYml(env) {
+  return request({
+    url: `/lcd/${env}/config/template-download`,
+    responseType: 'blob',
+    headers: {'Accept': 'application/octet-stream, application/json, text/plain, */*'},
+    method: 'get'
+  })
+}
+
+export function uploadYml(env, data) {
+  return request({
+    url: `/lcd/${env}/upload`,
+    method: 'post',
+    data: data
   })
 }
