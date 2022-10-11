@@ -45,7 +45,7 @@ export function downloadYml(env) {
 
 export function uploadYml(env, data) {
   return request({
-    url: `/lcd/${env}/upload`,
+    url: `/lcd/${env}/config/upload`,
     method: 'post',
     data: data
   })

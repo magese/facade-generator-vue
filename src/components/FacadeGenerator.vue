@@ -71,6 +71,7 @@ export default {
       envList: [
           'sit', 'sit2', 'sit3', 'uat', 'uat2', 'uat3', 'uat4', 'dc2', 'pre'
       ],
+      ymlFilename: 'lowcode-file-setting.yml',
       downloadTemplateLoading: false,
       generateLoading: false,
       downloadCodeLoading: false,
@@ -173,7 +174,7 @@ export default {
       downloadYml(this.selectedEnv).then(res => {
         this.res = res
         isBlobResponse(res).then(r => {
-          download(r.data, this.templateFilename, 'text/yml;charset=utf-8')
+          download(r.data, this.ymlFilename, 'text/yml;charset=utf-8')
         }).catch(e => {
           alert(e.msg)
           this.res = e
