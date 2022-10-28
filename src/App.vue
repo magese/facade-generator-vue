@@ -1,5 +1,8 @@
 <template>
-  <img alt="Vue logo" src="./assets/logo.png">
+  <div style="display: flex; justify-content: center; align-items: center; margin: 10px 0 20px 0">
+    <img alt="Vue logo" src="./assets/logo.svg">
+    <h1 style="font-size: 42px">服务前置低代码平台</h1>
+  </div>
   <facade-generator/>
 </template>
 

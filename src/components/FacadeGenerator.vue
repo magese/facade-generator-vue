@@ -5,7 +5,12 @@
       <div class="container" :class="{'loading': downloadTemplateLoading}">
         <h2>模板下载</h2>
         <p>点击下方按钮下载配置Excel模板</p>
-        <p>文件名称：<input type="text" v-model="templateFilename"></p>
+        <p>模板文件：
+          <select v-model="templateFilename">
+            <option v-for="item in filenameList" :value="item.value">{{ item.key }}</option>
+          </select>
+        </p>
+        <p>文件名称：{{ templateFilename }}</p>
         <p><button @click="downloadTemplate">下载模板</button></p>
       </div>
       <div class="container" :class="{'loading': generateLoading}">
@@ -66,6 +71,10 @@ export default {
   data() {
     return {
       templateFilename: 'facade-generator-setting.v2.xlsx',
+      filenameList: [
+        {key: '实体类生成模板', value: 'facade-generator-setting.v2.xlsx'},
+        {key: '项目生成模板', value: 'facade-generator-setting.v1.xlsx'}
+      ],
       fileKey: '',
       selectedEnv: 'sit',
       envList: [
