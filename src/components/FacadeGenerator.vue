@@ -36,11 +36,12 @@
       <h1>文件配置</h1>
       <div class="container" :class="{'loading': downloadYmlLoading}">
         <h2>当前环境：{{ selectedEnv }}</h2>
-        <p>选择环境：
-          <select v-model="selectedEnv">
-            <option v-for="env in envList" :value="env">{{ env }}</option>
-          </select>
-        </p>
+        <p><span class="env-label">sit环境：</span><button class="env-btn" @click="this.selectedEnv = env" v-for="env in sitList">{{ env }}</button></p>
+        <p><span class="env-label">uat环境：</span><button class="env-btn" @click="this.selectedEnv = env" v-for="env in uatList">{{ env }}</button></p>
+        <p><span class="env-label">dc环境：</span><button class="env-btn" @click="this.selectedEnv = env" v-for="env in dcList">{{ env }}</button></p>
+        <p><span class="env-label">sit-vke环境：</span><button class="env-btn" @click="this.selectedEnv = env" v-for="env in sitVkeList">{{ env }}</button></p>
+        <p><span class="env-label">uat-vke环境：</span><button class="env-btn" @click="this.selectedEnv = env" v-for="env in uatVkeList">{{ env }}</button></p>
+        <p><span class="env-label">pre环境：</span><button class="env-btn" @click="this.selectedEnv = env" v-for="env in preList">{{ env }}</button></p>
       </div>
       <div class="container" :class="{'loading': downloadYmlLoading}">
         <h2>下载示例配置</h2>
@@ -77,9 +78,12 @@ export default {
       ],
       fileKey: '',
       selectedEnv: 'sit',
-      envList: [
-          'sit', 'sit2', 'sit3', 'uat', 'uat2', 'uat3', 'uat4', 'dc2', 'sit1-vke', 'sit2-vke', 'sit3-vke', 'uat1-vke', 'uat2-vke', 'uat3-vke', 'pre'
-      ],
+      sitList: ['sit', 'sit2', 'sit3'],
+      uatList: ['uat', 'uat2', 'uat3'],
+      dcList: ['uat4', 'dc2'],
+      sitVkeList: ['sit1-vke', 'sit2-vke', 'sit3-vke'],
+      uatVkeList: ['uat1-vke', 'uat2-vke', 'uat3-vke'],
+      preList: ['pre'],
       ymlFilename: 'lowcode-file-setting.yml',
       downloadTemplateLoading: false,
       generateLoading: false,
@@ -275,4 +279,13 @@ h2 {
   background: rgba(204, 204, 204, 0.30);
 }
 
+.env-btn {
+  width: 70px;
+  margin-right: 7px;
+}
+
+.env-label {
+  display: inline-block;
+  width: 90px;
+}
 </style>
