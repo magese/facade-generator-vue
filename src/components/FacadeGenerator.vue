@@ -78,7 +78,7 @@ export default {
       fileKey: '',
       selectedEnv: 'sit',
       envList: [
-          'sit', 'sit2', 'sit3', 'uat', 'uat2', 'uat3', 'uat4', 'dc2', 'pre'
+          'sit', 'sit2', 'sit3', 'uat', 'uat2', 'uat3', 'uat4', 'dc2', 'sit1-vke', 'sit2-vke', 'sit3-vke', 'uat1-vke', 'uat2-vke', 'uat3-vke', 'pre'
       ],
       ymlFilename: 'lowcode-file-setting.yml',
       downloadTemplateLoading: false,

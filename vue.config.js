@@ -24,7 +24,7 @@ module.exports = {
     open: true
   },
   configureWebpack: {
-    name: 'facade-generator-vue',
+    name: '服务前置低代码平台',
     resolve: {
       alias: {
         '@': resolve('src')
