@@ -32,38 +32,46 @@
         <p><button @click="downloadCode">下载代码</button></p>
       </div>
     </div>
+
     <div class="page-item">
-      <h1>文件配置</h1>
-      <div class="container" :class="{'loading': downloadYmlLoading}">
-        <h2>当前环境：{{ selectedEnv }}</h2>
-        <p><span class="env-label">sit环境：</span><button class="env-btn" @click="this.selectedEnv = env" v-for="env in sitList">{{ env }}</button></p>
-        <p><span class="env-label">uat环境：</span><button class="env-btn" @click="this.selectedEnv = env" v-for="env in uatList">{{ env }}</button></p>
-        <p><span class="env-label">dc环境：</span><button class="env-btn" @click="this.selectedEnv = env" v-for="env in dcList">{{ env }}</button></p>
-        <p><span class="env-label">sit-vke环境：</span><button class="env-btn" @click="this.selectedEnv = env" v-for="env in sitVkeList">{{ env }}</button></p>
-        <p><span class="env-label">uat-vke环境：</span><button class="env-btn" @click="this.selectedEnv = env" v-for="env in uatVkeList">{{ env }}</button></p>
-        <p><span class="env-label">pre环境：</span><button class="env-btn" @click="this.selectedEnv = env" v-for="env in preList">{{ env }}</button></p>
+      <h1>常用工具</h1>
+      <div class="container" :class="{'loading': rsaLoading}">
+        <h2>RSA密钥生成</h2>
+        <p>
+          <label for="rsa-length">密钥长度：</label>
+          <input type="number" id="rsa-length" v-model="rsaLength" style="width: 100px">
+          <button @click="this.rsaKeyGenerate">生成密钥对</button>
+        </p>
+        <p>公钥</p>
+        <textarea rows="3" style="width: 100%" readonly v-model="rsaPublicKey"/>
+        <p>私钥</p>
+        <textarea rows="7" style="width: 100%" readonly v-model="rsaPrivateKey"/>
       </div>
-      <div class="container" :class="{'loading': downloadYmlLoading}">
-        <h2>下载示例配置</h2>
-        <p>点击下方按钮下载配置yml模板</p>
-        <p><button @click="downloadYml">下载配置</button></p>
+      <div class="container" :class="{'loading': fileDownloadLoading}">
+        <h2>常用文件下载</h2>
+        <div><button class="file-btn" @click="this.fileDownload(fileDown)" v-for="fileDown in fileDownList">{{ fileDown.name }}</button></div>
       </div>
-      <div class="container" :class="{'loading': uploadYmlLoading}">
-        <h2>上传文件配置</h2>
-        <p>选择上传的.yml配置文件</p>
-        <p><input type="file" name="file" ref="ymlUpload"></p>
-        <p><button @click="uploadYml">上传配置</button></p>
+      <div class="container" :class="{'loading': fileUploadLoading}">
+        <h2>文件上传</h2>
+        <p>选择上传的文件</p>
+        <p><input type="file" name="file" ref="uploadFile"></p>
+        <p>选择输入上传的swift文件名或sftp全路径</p>
+        <p><input type="text" v-model="uploadFilePath"></p>
+        <p>
+          <button @click="this.fileUpload('swift')">上传swift</button>
+          <button @click="this.fileUpload('sftp')" style="margin-left: 10px">上传sftp</button>
+        </p>
       </div>
     </div>
   </div>
-  <div class="container">
+  <div class="container" ref="responseContainer">
     <h2>响应数据</h2>
-    <p><json-viewer :value="res" expand-depth="5" copyable boxed/></p>
+    <p><json-viewer :value="res" :expand-depth="5" copyable boxed/></p>
   </div>
 </template>
 
 <script>
-import { downloadTemplate, generate, downloadCode, dtoGenerate, downloadYml, uploadYml } from '@/api'
+import { downloadTemplate, generate, downloadCode, dtoGenerate, rsaGenerate, fileDownload, fileUploadSwift, fileUploadSftp } from '@/api'
 import { download, isBlobResponse } from '@/utils/common'
 import { JsonViewer } from 'vue-json-viewer/ssr'
 
@@ -77,19 +85,28 @@ export default {
         {key: '项目生成模板', value: 'facade-generator-setting.v1.xlsx'}
       ],
       fileKey: '',
-      selectedEnv: 'sit',
-      sitList: ['sit', 'sit2', 'sit3'],
-      uatList: ['uat', 'uat2', 'uat3'],
-      dcList: ['uat4', 'dc2'],
-      sitVkeList: ['sit1-vke', 'sit2-vke', 'sit3-vke'],
-      uatVkeList: ['uat1-vke', 'uat2-vke', 'uat3-vke'],
-      preList: ['pre'],
       ymlFilename: 'lowcode-file-setting.yml',
+      rsaLength: 2048,
+      rsaPublicKey: '',
+      rsaPrivateKey: '',
+      fileDownList: [
+        {name: '身份证正面-03.jpg', value: '03.jpg', type: 'image/jpg'},
+        {name: '身份证反面-70.jpg', value: '70.jpg', type: 'image/jpg'},
+        {name: '人脸照-40.jpg', value: '40.jpg', type: 'image/jpg'},
+        {name: '客户知情确认书-128.pdf', value: '128.pdf', type: 'application/pdf'},
+        {name: '个人征信授权书-129.pdf', value: '129.pdf', type: 'application/pdf'},
+        {name: '授信合同-216.pdf', value: '216.pdf', type: 'application/pdf'},
+        {name: '借款合同-220.pdf', value: '220.pdf', type: 'application/pdf'},
+        {name: '绑卡协议-230.pdf', value: '230.pdf', type: 'application/pdf'},
+        {name: '担保合同-273.pdf', value: '273.pdf', type: 'application/pdf'}
+      ],
+      uploadFilePath: '',
       downloadTemplateLoading: false,
       generateLoading: false,
       downloadCodeLoading: false,
-      downloadYmlLoading: false,
-      uploadYmlLoading: false,
+      rsaLoading: false,
+      fileDownloadLoading: false,
+      fileUploadLoading: false,
       res: {}
     }
   },
@@ -105,11 +122,7 @@ export default {
           this.res = e
         })
         this.downloadTemplateLoading = false
-      }).catch(e => {
-        console.error(e)
-        this.res = e
-        this.downloadTemplateLoading = false
-      })
+      }).catch(e => this.onError(e))
     },
     dtoGenerate() {
       this.generateLoading = true
@@ -132,11 +145,7 @@ export default {
         }
         this.fileKey = data.data.fileKey
         this.generateLoading = false
-      }).catch(e => {
-        console.error(e)
-        this.res = e
-        this.generateLoading = false
-      })
+      }).catch(e => this.onError(e))
     },
     generate() {
       this.generateLoading = true
@@ -159,11 +168,7 @@ export default {
         }
         this.fileKey = data.data.fileKey
         this.generateLoading = false
-      }).catch(e => {
-        console.error(e)
-        this.res = e
-        this.generateLoading = false
-      })
+      }).catch(e => this.onError(e))
     },
     downloadCode() {
       this.downloadCodeLoading = true
@@ -176,54 +181,92 @@ export default {
           this.res = e
         })
         this.downloadCodeLoading = false
-      }).catch(e => {
-        console.error(e)
-        this.res = e
-        this.downloadCodeLoading = false
-      })
+      }).catch(e => this.onError(e))
     },
-    downloadYml() {
-      this.downloadYmlLoading = true
-      downloadYml(this.selectedEnv).then(res => {
+    rsaKeyGenerate() {
+      this.rsaLoading = true
+      const data = {keyLength: this.rsaLength}
+
+      rsaGenerate(data).then(({data, status, headers}) => {
+        this.res = {data, status, headers}
+        if(data.code !== '000000') {
+          alert(data.msg)
+          this.rsaLoading = false
+          return
+        }
+        this.rsaPublicKey = data.data.publicKey
+        this.rsaPrivateKey = data.data.privateKey
+        this.rsaLoading = false
+      }).catch(e => this.onError(e))
+    },
+    fileDownload(fileDown) {
+      this.fileDownloadLoading = true
+      fileDownload(fileDown.value).then(res => {
         this.res = res
         isBlobResponse(res).then(r => {
-          download(r.data, this.ymlFilename, 'text/yml;charset=utf-8')
+          download(r.data, fileDown.name, fileDown.type)
         }).catch(e => {
           alert(e.msg)
           this.res = e
         })
-        this.downloadYmlLoading = false
-      }).catch(e => {
-        console.error(e)
-        this.res = e
-        this.downloadYmlLoading = false
-      })
+        this.fileDownloadLoading = false
+      }).catch(e => this.onError(e))
     },
-    uploadYml() {
-      this.uploadYmlLoading = true
-      const file = this.$refs.ymlUpload.files[0]
+    fileUpload(type) {
+      this.fileUploadLoading = true
+      const file = this.$refs.uploadFile.files[0]
       if(!file) {
-        alert('请先选择yml文件')
-        this.uploadYmlLoading = false
+        alert('请先选择文件')
+        this.fileUploadLoading = false
         return
       }
 
       const data = new FormData()
       data.append('file', file)
 
-      uploadYml(this.selectedEnv, data).then(({data, status, headers}) => {
-        this.res = {data, status, headers}
-        if(data.code !== '000000') {
-          alert(data.msg)
-          this.uploadYmlLoading = false
+      switch(type) {
+        case 'swift':
+          fileUploadSwift(this.uploadFilePath, data).then(({data, status, headers}) => {
+            this.res = {data, status, headers}
+            if(data.code !== '000000') {
+              alert(data.msg)
+            }
+            this.fileUploadLoading = false
+          }).catch(e => this.onError(e))
+          break
+        case 'sftp':
+          fileUploadSftp(this.uploadFilePath, data).then(({data, status, headers}) => {
+            this.res = {data, status, headers}
+            if(data.code !== '000000') {
+              alert(data.msg)
+            }
+            this.fileUploadLoading = false
+          }).catch(e => this.onError(e))
+          break
+        default:
+          alert('未知的上传文件类型')
           return
-        }
-        this.uploadYmlLoading = false
-      }).catch(e => {
-        console.error(e)
-        this.res = e
-        this.uploadYmlLoading = false
-      })
+      }
+    },
+    onError(e) {
+      console.error(e)
+      alert(e.message)
+      this.res = e
+      this.downloadTemplateLoading = false
+      this.generateLoading = false
+      this.downloadCodeLoading = false
+      this.rsaLoading = false
+      this.fileDownloadLoading = false
+      this.fileUploadLoading = false
+      this.scrollToBottom()
+    },
+    scrollToBottom() {
+      setTimeout(() => {
+        window.scrollTo({
+          top: document.body.scrollHeight,
+          behavior: 'smooth'
+        })
+      }, 500)
     }
   },
   components: {JsonViewer}
@@ -279,13 +322,9 @@ h2 {
   background: rgba(204, 204, 204, 0.30);
 }
 
-.env-btn {
-  width: 70px;
-  margin-right: 7px;
-}
-
-.env-label {
-  display: inline-block;
-  width: 90px;
+.file-btn {
+  width: 160px;
+  margin-right: 5px;
+  margin-top: 10px;
 }
 </style>
