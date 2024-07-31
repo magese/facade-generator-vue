@@ -55,12 +55,14 @@
         <h2>文件上传</h2>
         <p>选择上传的文件</p>
         <p><input type="file" name="file" ref="uploadFile"></p>
-        <p>选择输入上传的swift文件名或sftp全路径</p>
-        <p><input type="text" v-model="uploadFilePath"></p>
+        <p>选择输入上传swift或sftp的文件名</p>
+        <p><input type="text" v-model="uploadFileName" style="width: 100%" /></p>
         <p>
           <button @click="this.fileUpload('swift')">上传swift</button>
           <button @click="this.fileUpload('sftp')" style="margin-left: 10px">上传sftp</button>
         </p>
+        <p>保存路径</p>
+        <p><input type="text" v-model="resFilePath" readonly style="width: 100%" /></p>
       </div>
     </div>
   </div>
@@ -100,7 +102,8 @@ export default {
         {name: '绑卡协议-230.pdf', value: '230.pdf', type: 'application/pdf'},
         {name: '担保合同-273.pdf', value: '273.pdf', type: 'application/pdf'}
       ],
-      uploadFilePath: '',
+      uploadFileName: '',
+      resFilePath: '',
       downloadTemplateLoading: false,
       generateLoading: false,
       downloadCodeLoading: false,
@@ -214,6 +217,7 @@ export default {
     },
     fileUpload(type) {
       this.fileUploadLoading = true
+      this.resFilePath = ''
       const file = this.$refs.uploadFile.files[0]
       if(!file) {
         alert('请先选择文件')
@@ -226,20 +230,22 @@ export default {
 
       switch(type) {
         case 'swift':
-          fileUploadSwift(this.uploadFilePath, data).then(({data, status, headers}) => {
+          fileUploadSwift(this.uploadFileName, data).then(({data, status, headers}) => {
             this.res = {data, status, headers}
             if(data.code !== '000000') {
               alert(data.msg)
             }
+            this.resFilePath = data.data
             this.fileUploadLoading = false
           }).catch(e => this.onError(e))
           break
         case 'sftp':
-          fileUploadSftp(this.uploadFilePath, data).then(({data, status, headers}) => {
+          fileUploadSftp(this.uploadFileName, data).then(({data, status, headers}) => {
             this.res = {data, status, headers}
             if(data.code !== '000000') {
               alert(data.msg)
             }
+            this.resFilePath = data.data
             this.fileUploadLoading = false
           }).catch(e => this.onError(e))
           break
